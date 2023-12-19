@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Guess Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    #word-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .letter {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .letter:hover {
+      background-color: #ddd;
+    }
+
+    #result {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div id="word-container"></div>
+    <div id="result"></div>
+    <script>
+      // Word Guess Game
+      const words = ['javascript', 'html', 'css', 'react', 'python'];
+      let selectedWord = words[Math.floor(Math.random() * words.length)];
+      let guessedWord = Array.from(selectedWord).fill('_');
+      let attempts = 0;
+      const maxAttempts = 6;
+
+      function displayWord() {
+        const wordContainer = document.getElementById('word-container');
+        wordContainer.innerHTML = '';
+
+        guessedWord.forEach((letter, index) => {
+          const letterDiv = document.createElement('div');
+          letterDiv.textContent = letter;
+          letterDiv.classList.add('letter');
+          if (letter === '_') {
+            letterDiv.addEventListener('click', () => guessLetter(index));
+          }
+          wordContainer.appendChild(letterDiv);
+        });
+      }
+
+      function guessLetter(index) {
+        const guessedLetter = selectedWord[index];
+
+        if (!guessedWord.includes('_') || guessedWord[index] !== '_') {
+          return; // Ignore if the letter is already guessed or the game is over
+        }
+
+        let correctGuess = false;
+
+        for (let i = 0; i < selectedWord.length; i++) {
+          if (selectedWord[i] === guessedLetter) {
+            guessedWord[i] = guessedLetter;
+            correctGuess = true;
+          }
+        }
+
+        if (!correctGuess) {
+          attempts++;
+        }
+
+        displayWord();
+        checkGameStatus();
+      }
+
+      function checkGameStatus() {
+        const resultElement = document.getElementById('result');
+
+        if (attempts >= maxAttempts) {
+          resultElement.textContent = `Game Over! The word was: ${selectedWord}`;
+        } else if (!guessedWord.includes('_')) {
+          resultElement.textContent = 'Congratulations! You guessed the word!';
+        } else {
+          resultElement.textContent = `Attempts left: ${maxAttempts - attempts}`;
+        }
+      }
+
+      displayWord();
+    </script>
+  </div>
+</body>
+</html>
